@@ -21,11 +21,12 @@ process SAMTOOLS_FLAGSTAT {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
+    name=\$(basename "$bam" .bam)
     samtools \\
         flagstat \\
         --threads ${task.cpus} \\
         $bam \\
-        > ${prefix}.flagstat
+        > \${name}.flagstat
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
