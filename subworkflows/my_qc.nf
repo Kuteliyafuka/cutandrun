@@ -82,8 +82,7 @@ process INTERSECT {
     container "community.wave.seqera.io/library/bedtools:2.31.1--7c4ce4cb07c09ee4"
 
     input:
-    tuple val(meta), path(bam_file)
-    tuple val(meta), path(peak_file)
+    tuple val(meta), path(bam_file), path(peak_file)
 
     output:
     tuple val(meta), path("*_bedtools.txt"), emit: intersect
@@ -117,7 +116,11 @@ workflow MY_QC {
         ch_output_peak = CALL_BROAD_PEAK.out.scoreisland
     }
     ch_intersect_bam = MY_DEDUP.out.bam
-    INTERSECT(ch_intersect_bam, ch_intersect_peak)
+
+    ch_intersect_bam
+    .combine(ch_intersect_peak, by: 0)
+    .set { ch_intersect_input }
+    INTERSECT(ch_intersect_input)
 
     emit:
     flagstat = MY_DEDUP.out.flagstat

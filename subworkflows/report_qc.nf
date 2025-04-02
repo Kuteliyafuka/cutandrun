@@ -105,7 +105,7 @@ process COMPUTE_QC {
             str(mapping_rate("${align_flagstat}")),
             str(num_of_frags("${filtered_flagstat}")),
             str(1 - dup_rate("${markdup_flagstat}")),
-            str(count_coverage("${peak_file}")),
+            str(compute_coverage("${peak_file}")),
             str((count_reads_in_peaks("${intersect_file}")/2/num_of_frags("${filtered_flagstat}")))
         ]
 
