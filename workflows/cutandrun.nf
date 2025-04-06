@@ -159,6 +159,7 @@ include { DEEPTOOLS_PLOTHEATMAP as DEEPTOOLS_PLOTHEATMAP_PEAKS_ALL     } from ".
 include { CUSTOM_DUMPSOFTWAREVERSIONS                                  } from "../modules/local/custom_dumpsoftwareversions"
 include { REPORT_QC } from "../subworkflows/report_qc.nf"
 include { MY_QC } from "../subworkflows/my_qc.nf"
+include { MY_BIGWIG } from "../subworkflows/my_bigwig.nf"
 /*
  * SUBWORKFLOWS
  */
@@ -409,13 +410,15 @@ workflow CUTANDRUN {
     MY_QC(ch_samtools_bam)
     // MODULE: Report QC metrics
     //
+    ch_bigwig_input = MY_QC.out.bam
+        | combine(MY_QC.out.flagstat, by: [0])
+    MY_BIGWIG(ch_bigwig_input, PREPARE_GENOME.out.chrom_sizes.collect())
     
     ch_qc = ALIGN_BOWTIE2.out.flagstat
         | combine(MARK_DUPLICATES_PICARD.out.flagstat, by: [0])
         | combine(MY_QC.out.flagstat, by: [0])
         | combine(MY_QC.out.peak, by: [0])
         | combine(MY_QC.out.intersect, by: [0])
-    MY_QC.out.intersect.view()
-    ch_qc.view()
+
     REPORT_QC (ch_qc)
 }

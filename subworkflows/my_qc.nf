@@ -123,6 +123,7 @@ workflow MY_QC {
     INTERSECT(ch_intersect_input)
 
     emit:
+    bam = MY_DEDUP.out.bam
     flagstat = MY_DEDUP.out.flagstat
     peak = ch_output_peak
     intersect = INTERSECT.out.intersect
